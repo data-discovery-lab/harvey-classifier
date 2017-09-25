@@ -6,14 +6,17 @@ library(tm) # Text mining: Corpus and Document Term Matrix
 library(class) # KNN model
 library(SnowballC) # Stemming words
 library(ROCR)
+library(stringr)
 
-setwd("~/TTU-SOURCES/harvey-classifier/r")
+
+setwd("~/TTU-SOURCE/harvey-classifier/r")
 
 # Read csv with two columns: text and category
-df <- read.csv("data/knn.csv", sep =";", header = TRUE)
+df <- read.csv("data/labeled-rescue-1000.csv", sep =",", header = TRUE)
+df$text = str_replace_all(df$text,"[^[:graph:]]", " ") 
 
 # Create corpus
-docs <- Corpus(VectorSource(df$Text))
+docs <- Corpus(VectorSource(df$text))
 
 # Clean corpus
 docs <- tm_map(docs, content_transformer(tolower))
@@ -28,26 +31,32 @@ dtm <- DocumentTermMatrix(docs)
 
 # Transform dtm to matrix to data frame - df is easier to work with
 mat.df <- as.data.frame(data.matrix(dtm), stringsAsfactors = FALSE)
-str(mat.df)
 
-# Column bind category (known classification) -make the mat.df included labeld data
-mat.df <- cbind(mat.df, df$Category)
+nrow(mat.df)
+ncol(mat.df)
+
+# Column bind category (known classification)
+mat.df <- cbind(mat.df, df$label)
 
 # Change name of new column to "category"
-colnames(mat.df)[ncol(mat.df)] <- "category"
+colnames(mat.df)[ncol(mat.df)] <- "labeled-rescue"
+ncol(mat.df)
 
 # Split data by rownumber into two equal portions
 train <- sample(nrow(mat.df), ceiling(nrow(mat.df) * .50))
 test <- (1:nrow(mat.df))[- train]
 
+length(train)
+length(test)
+
 # Isolate classifier
-cl <- mat.df[, "category"]
+cl <- mat.df[, "labeled-rescue"]
 
 # Create model data and remove "category"
-modeldata <- mat.df[,!colnames(mat.df) %in% "category"]
+modeldata <- mat.df[,!colnames(mat.df) %in% "labeled-rescue"]
 
 # Create model: training set, test set, training set classifier
-knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train], prob = TRUE)
+knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train], prob = TRUE, k = 2)
 
 # Confusion matrix
 conf.mat <- table("Predictions" = knn.pred, Actual = cl[test])
