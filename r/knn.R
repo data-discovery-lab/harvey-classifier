@@ -5,6 +5,7 @@ set.seed(100)
 library(tm) # Text mining: Corpus and Document Term Matrix
 library(class) # KNN model
 library(SnowballC) # Stemming words
+library(ROCR)
 
 setwd("~/TTU-SOURCE/harvey-classifier/r")
 
@@ -45,7 +46,7 @@ cl <- mat.df[, "category"]
 modeldata <- mat.df[,!colnames(mat.df) %in% "category"]
 
 # Create model: training set, test set, training set classifier
-knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train])
+knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train], prob = TRUE)
 
 # Confusion matrix
 conf.mat <- table("Predictions" = knn.pred, Actual = cl[test])
@@ -55,5 +56,23 @@ conf.mat
 (accuracy <- sum(diag(conf.mat))/length(test) * 100)
 
 # Create data frame with test data and predicted category
-df.pred <- cbind(knn.pred, modeldata[test, ])
-write.table(df.pred, file="output.csv", sep=";")
+# df.pred <- cbind(knn.pred, modeldata[test, ])
+# write.table(df.pred, file="output.csv", sep=";")
+
+
+prob <- attr(knn.pred , "prob")
+pred_knn <- performance(knn.pred, "tpr", "fpr")
+plot(pred_knn, avg= "threshold", colorize=T, lwd=3, main="a ROC curve!")
+
+## sample ROCR curve
+data(ROCR.simple)
+pred <- prediction( ROCR.simple$predictions, ROCR.simple$labels )
+pred2 <- prediction(abs(ROCR.simple$predictions + 
+                          rnorm(length(ROCR.simple$predictions), 0, 0.1)), 
+                    ROCR.simple$labels)
+perf <- performance( pred, "tpr", "fpr" )
+perf2 <- performance(pred2, "tpr", "fpr")
+plot( perf, colorize = TRUE)
+plot(perf2, add = TRUE, colorize = TRUE)
+
+
