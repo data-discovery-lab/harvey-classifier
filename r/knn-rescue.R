@@ -50,6 +50,7 @@ set.seed(456)
 spl = sample.split(mat.df$`labeled-rescue`, SplitRatio = 0.5)
 trainSamples = subset(mat.df, spl == TRUE)
 testSamples = subset(mat.df, spl == FALSE)
+clTrain = as.factor(trainSamples$`labeled-rescue`)
 clTest = testSamples$`labeled-rescue`
 nrow(train)
 # train <- sample(nrow(mat.df), ceiling(nrow(mat.df) * .50))
@@ -58,46 +59,65 @@ nrow(train)
 train = trainSamples[, ,!colnames(trainSamples) %in% "labeled-rescue"]
 test = testSamples[, ,!colnames(testSamples) %in% "labeled-rescue"]
 
-# Create model: training set, test set, training set classifier
-#knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train], prob = TRUE, k = 2)
 
-knn.pred <- knn(train, test, testSamples$`labeled-rescue`, prob = TRUE, k = 2)
+doKNN = function(train, test, clTrain, clTest, kValue) {
+  knn.pred <- knn(train, test, clTrain, prob = TRUE, k = kValue)
+  
+  # Confusion matrix
+  conf.mat <- table("Predictions" = knn.pred, Actual = clTest)
+  conf.mat
+  
+  # Accuracy
+  a = conf.mat[2,2]
+  a
+  b = conf.mat[1,2]
+  b
+  c = conf.mat[2,1]
+  c
+  d = conf.mat[1,1]
+  d
+  
+  precision = p = a / (a+c)
+  p
+  message(paste(p))
+  recall = r = a / (a+b)
+  r
+  f.measure = f = 2*a / (2*a + b + c)
+  f
+  
+  accuracy <- sum(diag(conf.mat))/nrow(test) * 100
+  accuracy
+  
+  # Create data frame with test data and predicted category
+  # df.pred <- cbind(knn.pred, modeldata[test, ])
+  # write.table(df.pred, file="output.csv", sep=";")
+  
+  
+  
+  prob <- attr(knn.pred , "prob")
+  knn.pred <- prediction(prob, clTest)
+  pred_knn <- performance(knn.pred, "tpr", "fpr")
+  
+  return (pred_knn)
+}
 
+colors <- c('red', 'blue', 'green', 'yellow', 'black') # 5 colors
+min = 1
+max = 5
 
+graphics.off()
 
-# Confusion matrix
-conf.mat <- table("Predictions" = knn.pred, Actual = clTest)
-conf.mat
+for(i in  min:max) {
+  pred = doKNN(train, test, clTrain, clTest, kValue = i*5)
+  if (i > min) {
+    plot(pred, add = TRUE, avg= "threshold", col=colors[i], lwd=2)
+  }
+  else {
+    plot(pred, avg= "threshold", col=colors[i], lwd=2, main="ROC curve!")
+    
+  }
+}
 
-# Accuracy
-a = conf.mat[2,2]
-a
-b = conf.mat[1,2]
-b
-c = conf.mat[2,1]
-c
-d = conf.mat[1,1]
-d
-
-precision = p = a / (a+c)
-p
-
-recall = r = a / (a+b)
-r
-f.measure = f = 2*a / (2*a + b + c)
-f
-
-(accuracy <- sum(diag(conf.mat))/nrow(test) * 100)
-
-# Create data frame with test data and predicted category
-# df.pred <- cbind(knn.pred, modeldata[test, ])
-# write.table(df.pred, file="output.csv", sep=";")
-
-
-
-prob <- attr(knn.pred , "prob")
-knn.pred <- prediction(prob, clTest)
-pred_knn <- performance(knn.pred, "tpr", "fpr")
-plot(pred_knn, avg= "threshold", colorize=T, lwd=3, main="a ROC curve!")
-
+pred = doKNN(train, test, clTrain, clTest, kValue = 10)
+plot(pred, add = TRUE, avg= "threshold", col="purple", lwd=2)
 
