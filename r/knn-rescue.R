@@ -7,6 +7,7 @@ library(class) # KNN model
 library(SnowballC) # Stemming words
 library(ROCR)
 library(stringr)
+library(caTools)
 
 
 setwd("~/TTU-SOURCE/harvey-classifier/r")
@@ -43,46 +44,60 @@ colnames(mat.df)[ncol(mat.df)] <- "labeled-rescue"
 ncol(mat.df)
 
 # Split data by rownumber into two equal portions
-train <- sample(nrow(mat.df), ceiling(nrow(mat.df) * .50))
-test <- (1:nrow(mat.df))[- train]
+set.seed(456)
 
-length(train)
-length(test)
+# create split with 70% is TRUE (this will be used as training set)
+spl = sample.split(mat.df$`labeled-rescue`, SplitRatio = 0.5)
+trainSamples = subset(mat.df, spl == TRUE)
+testSamples = subset(mat.df, spl == FALSE)
+clTest = testSamples$`labeled-rescue`
+nrow(train)
+# train <- sample(nrow(mat.df), ceiling(nrow(mat.df) * .50))
+# test <- (1:nrow(mat.df))[- train]
 
-# Isolate classifier
-cl <- mat.df[, "labeled-rescue"]
-
-# Create model data and remove "category"
-modeldata <- mat.df[,!colnames(mat.df) %in% "labeled-rescue"]
+train = trainSamples[, ,!colnames(trainSamples) %in% "labeled-rescue"]
+test = testSamples[, ,!colnames(testSamples) %in% "labeled-rescue"]
 
 # Create model: training set, test set, training set classifier
-knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train], prob = TRUE, k = 2)
+#knn.pred <- knn(modeldata[train, ], modeldata[test, ], cl[train], prob = TRUE, k = 2)
+
+knn.pred <- knn(train, test, testSamples$`labeled-rescue`, prob = TRUE, k = 2)
+
+
 
 # Confusion matrix
-conf.mat <- table("Predictions" = knn.pred, Actual = cl[test])
+conf.mat <- table("Predictions" = knn.pred, Actual = clTest)
 conf.mat
 
 # Accuracy
-(accuracy <- sum(diag(conf.mat))/length(test) * 100)
+a = conf.mat[2,2]
+a
+b = conf.mat[1,2]
+b
+c = conf.mat[2,1]
+c
+d = conf.mat[1,1]
+d
+
+precision = p = a / (a+c)
+p
+
+recall = r = a / (a+b)
+r
+f.measure = f = 2*a / (2*a + b + c)
+f
+
+(accuracy <- sum(diag(conf.mat))/nrow(test) * 100)
 
 # Create data frame with test data and predicted category
 # df.pred <- cbind(knn.pred, modeldata[test, ])
 # write.table(df.pred, file="output.csv", sep=";")
 
 
+
 prob <- attr(knn.pred , "prob")
+knn.pred <- prediction(prob, clTest)
 pred_knn <- performance(knn.pred, "tpr", "fpr")
 plot(pred_knn, avg= "threshold", colorize=T, lwd=3, main="a ROC curve!")
-
-## sample ROCR curve
-data(ROCR.simple)
-pred <- prediction( ROCR.simple$predictions, ROCR.simple$labels )
-pred2 <- prediction(abs(ROCR.simple$predictions + 
-                          rnorm(length(ROCR.simple$predictions), 0, 0.1)), 
-                    ROCR.simple$labels)
-perf <- performance( pred, "tpr", "fpr" )
-perf2 <- performance(pred2, "tpr", "fpr")
-plot( perf, colorize = TRUE)
-plot(perf2, add = TRUE, colorize = TRUE)
 
 
