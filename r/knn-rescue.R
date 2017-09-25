@@ -79,7 +79,6 @@ doKNN = function(train, test, clTrain, clTest, kValue) {
   
   precision = p = a / (a+c)
   p
-  message(paste(p))
   recall = r = a / (a+b)
   r
   f.measure = f = 2*a / (2*a + b + c)
@@ -87,6 +86,9 @@ doKNN = function(train, test, clTrain, clTest, kValue) {
   
   accuracy <- sum(diag(conf.mat))/nrow(test) * 100
   accuracy
+  
+  message(paste("TP = a = ", a, ", FN = b =", b, ", FP = c =", c, ", TN = d =", d))
+  message(paste("k =", kValue, ", p =", p, "r =", r, "f-measure =", f))
   
   # Create data frame with test data and predicted category
   # df.pred <- cbind(knn.pred, modeldata[test, ])
@@ -108,7 +110,7 @@ max = 5
 graphics.off()
 
 for(i in  min:max) {
-  pred = doKNN(train, test, clTrain, clTest, kValue = i*5)
+  pred = doKNN(train, test, clTrain, clTest, kValue = i)
   if (i > min) {
     plot(pred, add = TRUE, avg= "threshold", col=colors[i], lwd=2)
   }
@@ -117,7 +119,3 @@ for(i in  min:max) {
     
   }
 }
-
-pred = doKNN(train, test, clTrain, clTest, kValue = 10)
-plot(pred, add = TRUE, avg= "threshold", col="purple", lwd=2)
-
