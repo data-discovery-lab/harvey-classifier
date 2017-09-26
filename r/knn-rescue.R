@@ -88,7 +88,7 @@ doKNN = function(train, test, clTrain, clTest, kValue) {
   accuracy
   
   message(paste("TP = a = ", a, ", FN = b =", b, ", FP = c =", c, ", TN = d =", d))
-  message(paste("k =", kValue, ", p =", p, "r =", r, "f-measure =", f))
+  message(paste("k =", kValue, "accuracy=", accuracy, " p =", p, "r =", r, "f-measure =", f))
   
   # Create data frame with test data and predicted category
   # df.pred <- cbind(knn.pred, modeldata[test, ])
