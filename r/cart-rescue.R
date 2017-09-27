@@ -11,7 +11,7 @@ library(topicmodels)
 library(ggplot2)
 library(stringr)
 
-#set.seed(123)
+set.seed(123)
 setwd("~/TTU-SOURCES/harvey-classifier/r")
 
 # without pre-processing data
@@ -123,3 +123,4 @@ fMeasure
 accuracy = (a + d) / (a + b + c +d)
 accuracy
 
+message(paste("accuracy: ", accuracy, "; precision: ", precision, "; recall: ", recall, "; f-measure: ", fMeasure))
