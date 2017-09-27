@@ -81,8 +81,8 @@ library(caTools)
 
 # create split with 70% is TRUE (this will be used as training set)
 spl = sample.split(cleanTweets$label, SplitRatio = 0.7)
-trainSparse = subset(cleanTweets, spl == TRUE)
-testSparse = subset(cleanTweets, spl == FALSE)
+trainSamples = subset(cleanTweets, spl == TRUE)
+testSamples = subset(cleanTweets, spl == FALSE)
 ## trainSparse now has 700 rows (70%) 
 nrow(trainSparse)
 str(testSparse)
@@ -92,19 +92,25 @@ nrow(testSparse)
 library(rpart)
 library(rpart.plot)
 
+count(trainSamples)
+train = trainSamples[, !colnames(trainSamples) %in% "label"]
+count(train)
+test = testSamples[, !colnames(testSamples) %in% "label"]
+
 # Build a logistic regression model.
-tweetLog <- glm(label ~ ., data=trainSparse, family='binomial')
+tweetLog <- glm(label ~ ., data=train, family='binomial')
+
+coef(tweetLog)
+summary(tweetLog)
 
 # Predict using 
-predictLog <- predict(tweetLog, newdata=testSparse, type="response")
-summary(predictCart)
-
-str(predictCart)
-str(testSparse$label)
+predictLog <- predict(tweetLog, newdata=test, type="response")
+predictGlm = rep(0, length(testSparse$label))
+predictGlm[predictLog >= 0.5] = 1
 
 
 ## accuracy test
-confusionMatrix = table(testSparse$label, predictCart >= 0.5)
+confusionMatrix = table(testSparse$label, predictGlm)
 confusionMatrix
 confusionMatrix[1,1]
 
