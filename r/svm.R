@@ -26,6 +26,7 @@ tweets = read.csv("data/labeled-rescue-1000.csv", stringsAsFactors = FALSE)
 str(tweets)
 sum(tweets$label)
 
+
 cleanTweet = function(tweets) {
   replace_reg = "https://t.co/[A-Za-z\\d]+|http://[A-Za-z\\d]+|&amp;|&lt;|&gt;|RT|https"
   unnest_reg = "([^A-Za-z_\\d#@']|'(?![A-Za-z_\\d#@]))"
@@ -60,47 +61,59 @@ createDTMCleanTweet = function(tweets) {
   
   # find frequency
   findFreqTerms(dtmTweets, lowfreq = 20)
-  
-  
+
+
   # Filter out sparse terms by keeping only terms that appear in 0.3% or more of the revisions
   sparseTweets = removeSparseTerms(dtmTweets, 0.997)
   sparseTweets
-  
+
   # cleanTweets = as.data.frame(as.matrix(sparseTweets))
   # colnames(cleanTweets) = make.names(colnames(cleanTweets))
   # cleanTweets$label = tweets$label
-  # 
-  # str(cleanTweets)  
-  # 
+  #
+  # str(cleanTweets)
+  #
   # return(cleanTweets)
-  
+
   return (sparseTweets)
 }
 
 tweets = cleanTweet(tweets)
 
-cleanTweets = createDTMCleanTweet(tweets)
-
-# set.seed(456)
 
 # create split with 70% is TRUE (this will be used as training set)
-spl = sample.split(cleanTweets$label, SplitRatio = 0.7)
-trainSamples = subset(cleanTweets, spl == TRUE)
-testSamples = subset(cleanTweets, spl == FALSE)
+spl = sample.split(tweets$label, SplitRatio = 0.7)
+trainSamples = subset(tweets, spl == TRUE)
+testSamples = subset(tweets, spl == FALSE)
+
+train = as.data.frame(trainSamples$tweet, stringsAsFactors = FALSE)
+colnames(train) = c("tweet")
+
+test = as.data.frame(testSamples$tweet, stringsAsFactors = FALSE)
+colnames(test) = c("tweet")
+
+combinedSVMTweets = rbind(train, test)
+
+trainLabel = as.data.frame(trainSamples$label, stringsAsFactors = FALSE)
+colnames(trainLabel) = c("label")
+
+testLabel = as.data.frame(testSamples$label, stringsAsFactors = FALSE)
+colnames(testLabel) = c("label")
+
+combinedSVMLabel = rbind(trainLabel, testLabel)
+
+cleanTweetsDTMMatrix = createDTMCleanTweet(combinedSVMTweets)
+str(cleanTweets)
+# set.seed(456)
+
+
 ## trainSparse now has 700 rows (70%) 
 
 
-count(trainSamples)
-train = trainSamples[, !colnames(trainSamples) %in% "label"]
-count(train)
-test = testSamples[, !colnames(testSamples) %in% "label"]
-
-# Build a SVM model.
-matrix = rbind(train, test)
-labels = rbind(trainSamples$label, testSamples$label)
-
 trainSize = nrow(train)
-container <- create_container(matrix, labels, trainSize=1:trainSize, testSize=(trainSize+1):nrow(matrix), virgin=FALSE)
+
+container <- create_container(cleanTweetsDTMMatrix, combinedSVMLabel, trainSize=1:trainSize, testSize=(trainSize+1):nrow(combinedSVMLabel), virgin=FALSE)
+
 SVM <- train_model(container,"SVM")                 
 SVM_CLASSIFY <- classify_model(container, SVM)
 analytics <- create_analytics(container, cbind(SVM_CLASSIFY))
