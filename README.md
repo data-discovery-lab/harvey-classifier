@@ -26,7 +26,7 @@ Supported Classifiers:
 
 ### SVM - RTextTools
 
-##### accuracy:  0.93 ; precision:  0.605263157894737 ; recall:  0.793103448275862 ; f-measure:  0.686567164179104
+###### accuracy:  0.93 ; precision:  0.605263157894737 ; recall:  0.793103448275862 ; f-measure:  0.686567164179104
 
 
 
