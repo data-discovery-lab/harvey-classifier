@@ -24,11 +24,12 @@ Supported Classifiers:
 
 ###### accuracy:  0.703333333333333 ; precision:  0.247524752475248 ; recall:  0.657894736842105 ; f-measure:  0.359712230215827
 
-### SVM + Acknowledgement
+### SVM - RTextTools
 
-Thanks to the open library: https://www.csie.ntu.edu.tw/~cjlin/libshorttext/
+#####                                precision: 0.865 ; recall: 0.795 ; f-measure: 0.825
 
-SVM classification is done based on this library
+
+
 
 
 

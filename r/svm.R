@@ -112,7 +112,7 @@ str(cleanTweets)
 
 trainSize = nrow(train)
 
-container <- create_container(cleanTweetsDTMMatrix, combinedSVMLabel, trainSize=1:trainSize, testSize=(trainSize+1):nrow(combinedSVMLabel), virgin=FALSE)
+container <- create_container(cleanTweetsDTMMatrix, combinedSVMLabel$label, trainSize=1:trainSize, testSize=(trainSize+1):nrow(combinedSVMLabel), virgin=FALSE)
 
 SVM <- train_model(container,"SVM")                 
 SVM_CLASSIFY <- classify_model(container, SVM)
