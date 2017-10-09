@@ -13,7 +13,6 @@ library(stringr)
 library(e1071)
 library(caTools)
 library(RTextTools)
-library(ROCR)
 
 set.seed(123)
 setwd("~/TTU-SOURCES/harvey-classifier/r")
@@ -62,12 +61,12 @@ createDTMCleanTweet = function(tweets) {
   
   # find frequency
   findFreqTerms(dtmTweets, lowfreq = 20)
-
-
+  
+  
   # Filter out sparse terms by keeping only terms that appear in 0.3% or more of the revisions
   sparseTweets = removeSparseTerms(dtmTweets, 0.997)
   sparseTweets
-
+  
   # cleanTweets = as.data.frame(as.matrix(sparseTweets))
   # colnames(cleanTweets) = make.names(colnames(cleanTweets))
   # cleanTweets$label = tweets$label
@@ -75,7 +74,7 @@ createDTMCleanTweet = function(tweets) {
   # str(cleanTweets)
   #
   # return(cleanTweets)
-
+  
   return (sparseTweets)
 }
 
@@ -83,7 +82,7 @@ tweets = cleanTweet(tweets)
 
 
 # create split with 70% is TRUE (this will be used as training set)
-spl = sample.split(tweets$label, SplitRatio = 0.5)
+spl = sample.split(tweets$label, SplitRatio = 0.7)
 trainSamples = subset(tweets, spl == TRUE)
 testSamples = subset(tweets, spl == FALSE)
 
@@ -93,23 +92,23 @@ colnames(train) = c("tweet")
 test = as.data.frame(testSamples$tweet, stringsAsFactors = FALSE)
 colnames(test) = c("tweet")
 
-combinedSVMTweets = rbind(train, test)
-
 trainLabel = as.data.frame(trainSamples$label, stringsAsFactors = FALSE)
 colnames(trainLabel) = c("label")
 
 testLabel = as.data.frame(testSamples$label, stringsAsFactors = FALSE)
 colnames(testLabel) = c("label")
 
-combinedSVMLabel = rbind(trainLabel, testLabel)
-
-cleanTweetsDTMMatrix = createDTMCleanTweet(combinedSVMTweets)
-str(cleanTweets)
+trainDTM = createDTMCleanTweet(train)
 # set.seed(456)
 
+trainContainer <- create_container(trainDTM, trainLabel$label, trainSize=1:nrow(train), virgin=FALSE) 
+trainModel <- train_model(trainContainer, "SVM", kernel="linear", cost=1)
 
+testDTM = createDTMCleanTweet(test)
+testContainer <- create_container(testDTM, labels = testLabel$label, testSize=1:nrow(test), virgin=FALSE) 
 ## trainSparse now has 700 rows (70%) 
 
+results <- classify_model(testContainer, trainModel)
 
 trainSize = nrow(train)
 
@@ -146,11 +145,3 @@ accuracy = (a + d) / (a + b + c +d)
 accuracy
 
 message(paste("accuracy: ", accuracy, "; precision: ", precision, "; recall: ", recall, "; f-measure: ", fMeasure))
-
-svmmodel.prediction<-prediction(analytics@document_summary$SVM_PROB, analytics@document_summary$MANUAL_CODE)
-svmmodel.performance<-performance(svmmodel.prediction,"tpr","fpr")
-
-
-graphics.off()
-plot(svmmodel.performance, avg= "threshold", col="red", lwd=2, main="ROC curve!")
-
