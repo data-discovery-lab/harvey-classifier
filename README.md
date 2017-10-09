@@ -38,3 +38,37 @@ Supported Classifiers:
 
 ![KNN-1-5](https://github.com/litpuvn/harvey-classifier/raw/master/r/knn-1-5.png)
 
+## SVM using LibShortText Library
+
+LibShortText Library is already forked in this project. To begin, you must be using a Linux based machine. Change your directory to the libshort folder and run the command 'make'. After these steps are completed you are now ready to to use LibShortText.
+
+**Link to Libshort Folder:** https://github.com/litpuvn/harvey-classifier/tree/master/libshorttext-1.1
+
+**Required OS:** Linux
+
+**Terminal Command Required:** `$ make`
+
+### Basic SVM Accuracy Prediction
+
+In order to us LibShortText through the terminal be sure to format the data as described below. Once that is done, you are able to us the library from the terminal.
+
+**Text File Format (.txt):** <LABEL><TAB><TEXT>
+```
+1    harveyrescue harveyrelief eliza(832) 25742376506 glenmorris crt houston77084
+1    harveyrescue harveyrelief urgent alone elderly woman11611 innsbury(btwn bertrand hopper in aldine) houston 77093 flooded home
+1    harveyrescue harveyrelief one adult disable (sickle cell anemia) sharon beverly 10126 valley club dr houston tx 77078
+0    sosharveyrescue strandedhouston uscg billbishopkhou houstonpolice nationalguard texasguard cohoustonfire amodm9onf3
+0    love this look for the helpers you will always find people who are helping harvey2017 prayfortexas khtgfvkfer
+0    text harvey to 90999 help our friends in texas esqvx9sbg4
+```
+  
+**Accuracy Prediction:**
+```
+$ python text-train.py train-rescue-500.txt
+[output information]
+$ python text-predict.py text-rescue-500.txt train-rescue-500.txt.model predict_result
+Accuracy = 87.4627% (293/335)
+```
+![SVM Accuracy Example](https://github.com/litpuvn/harvey-classifier/libshorttext-1.1/Rescue-SVM-Demo/SVM_Accuracy_Ex.png)
+
+
