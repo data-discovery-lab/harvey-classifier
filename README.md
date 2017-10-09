@@ -69,6 +69,6 @@ $ python text-train.py train-rescue-500.txt
 $ python text-predict.py text-rescue-500.txt train-rescue-500.txt.model predict_result
 Accuracy = 87.4627% (293/335)
 ```
-![SVM Accuracy Example](https://github.com/litpuvn/harvey-classifier/libshorttext-1.1/Rescue-SVM-Demo/SVM_Accuracy_Ex.png)
+![SVM-Accuracy-Example](https://github.com/litpuvn/harvey-classifier/blob/master/libshorttext-1.1/Rescue-SVM-Demo/SVM_Accuracy_Ex.png)
 
 
