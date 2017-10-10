@@ -62,13 +62,26 @@ In order to us LibShortText through the terminal be sure to format the data as d
 0    text harvey to 90999 help our friends in texas esqvx9sbg4
 ```
   
-**Accuracy Prediction:**
+**Train Text File:**
+
+Train a properly formatted text file to obtain a model. This process will generate a train_file.model folder that will be used to help predict results
+
 ```
 $ python text-train.py train-rescue-500.txt
 [output information]
+```
+
+**Predict Results:**
+
+Predicts the results of the test file using the trained model that was generated from above. The output of this command is an accuracy precentage of how well the model processed the test file.
+
+```
 $ python text-predict.py text-rescue-500.txt train-rescue-500.txt.model predict_result
 Accuracy = 87.4627% (293/335)
 ```
+
+**Full Terminal Example:**
+
 ![SVM-Accuracy-Example](https://github.com/litpuvn/harvey-classifier/blob/master/libshorttext-1.1/Rescue-SVM-Demo/SVM_Accuracy_Ex.png)
 
 
