@@ -125,6 +125,11 @@ length(analytics@document_summary$MANUAL_CODE)
 length(analytics@document_summary$SVM_LABEL)
 
 
+
+svmResult = data.frame(svm.probs = analytics@document_summary$SVM_PROB, svm.actuals = analytics@document_summary$MANUAL_CODE)
+write.csv(svmResult, file = "data/svm-predict.csv", row.names=FALSE)
+
+
 ## accuracy test
 confusionMatrix = table(predict = analytics@document_summary$SVM_LABEL, actual = analytics@document_summary$MANUAL_CODE)
 confusionMatrix

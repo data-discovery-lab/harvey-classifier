@@ -97,25 +97,34 @@ doKNN = function(train, test, clTrain, clTest, kValue) {
   
   
   prob <- attr(knn.pred , "prob")
-  knn.pred <- prediction(prob, clTest)
-  pred_knn <- performance(knn.pred, "tpr", "fpr")
+  #knn.pred <- prediction(prob, clTest)
   
-  return (pred_knn)
+  
+  
+  return (prob)
 }
 
 colors <- c('red', 'blue', 'green', 'yellow', 'black') # 5 colors
 min = 1
-max = 5
+max = 1
 
 graphics.off()
 
 for(i in  min:max) {
-  pred = doKNN(train, test, clTrain, clTest, kValue = i)
+  prob = doKNN(train, test, clTrain, clTest, kValue = i)
+  knn.pred <- prediction(prob, clTest)
+  knn.perf <- performance(knn.pred, "tpr", "fpr")
+  
+  knnResult = data.frame(knn.probs = prob, knn.actuals = clTest)
+  write.csv(knnResult, file = "data/knn-predict.csv", row.names=FALSE)
+  
+  
   if (i > min) {
-    plot(pred, add = TRUE, avg= "threshold", col=colors[i], lwd=2)
+    plot(knn.perf, add = TRUE, avg= "threshold", col=colors[i], lwd=2)
   }
   else {
-    plot(pred, avg= "threshold", col=colors[i], lwd=2, main="ROC curve!")
+    plot(knn.perf, avg= "threshold", col=colors[i], lwd=2, main="ROC curve!")
     
   }
 }
+

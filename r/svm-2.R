@@ -99,49 +99,60 @@ testLabel = as.data.frame(testSamples$label, stringsAsFactors = FALSE)
 colnames(testLabel) = c("label")
 
 trainDTM = createDTMCleanTweet(train)
-# set.seed(456)
-
-trainContainer <- create_container(trainDTM, trainLabel$label, trainSize=1:nrow(train), virgin=FALSE) 
-trainModel <- train_model(trainContainer, "SVM", kernel="linear", cost=1)
-
+# # set.seed(456)
+# 
+# trainContainer <- create_container(trainDTM, trainLabel$label, trainSize=1:nrow(train), virgin=FALSE) 
+# trainModel <- train_model(trainContainer, "SVM", kernel="linear", cost=1)
+# 
 testDTM = createDTMCleanTweet(test)
-testContainer <- create_container(testDTM, labels = testLabel$label, testSize=1:nrow(test), virgin=FALSE) 
-## trainSparse now has 700 rows (70%) 
 
-results <- classify_model(testContainer, trainModel)
+dtm = as.data.frame(as.matrix(trainDTM))
+dtm$y = trainLabel$label
 
-trainSize = nrow(train)
-
-
-container <- create_container(cleanTweetsDTMMatrix, combinedSVMLabel$label, trainSize=1:trainSize, testSize=(trainSize+1):nrow(combinedSVMLabel), virgin=FALSE)
-
-SVM <- train_model(container,"SVM")                 
-SVM_CLASSIFY <- classify_model(container, SVM)
-analytics <- create_analytics(container, cbind(SVM_CLASSIFY))
-summary(analytics)
-
-length(analytics@document_summary$MANUAL_CODE)
-length(analytics@document_summary$SVM_LABEL)
+fitSVM <- svm(y ~ ., dtm, kernel = "linear", gamma = 2, cost=1, decision.values = T) 
+testData = as.data.frame(as.matrix(testDTM))
+testData$y = testLabel$label
+svm.pred = predict(fitSVM, data = testData, decision.values = TRUE)
 
 
-## accuracy test
-confusionMatrix = table(predict = analytics@document_summary$SVM_LABEL, actual = analytics@document_summary$MANUAL_CODE)
-confusionMatrix
 
-a = confusionMatrix[2,2] 
-b = confusionMatrix[2,1]
-c = confusionMatrix[1, 2]
-d = confusionMatrix[1, 1]
-precision = a / (a + c)
-precision
-
-recall = a / (a + b)
-recall
-
-fMeasure = 2*a / (2*a + b + c)
-fMeasure
-
-accuracy = (a + d) / (a + b + c +d)
-accuracy
-
-message(paste("accuracy: ", accuracy, "; precision: ", precision, "; recall: ", recall, "; f-measure: ", fMeasure))
+# testContainer <- create_container(testDTM, labels = testLabel$label, testSize=1:nrow(test), virgin=FALSE) 
+# ## trainSparse now has 700 rows (70%) 
+# 
+# results <- classify_model(testContainer, trainModel)
+# 
+# trainSize = nrow(train)
+# 
+# 
+# container <- create_container(cleanTweetsDTMMatrix, combinedSVMLabel$label, trainSize=1:trainSize, testSize=(trainSize+1):nrow(combinedSVMLabel), virgin=FALSE)
+# 
+# SVM <- train_model(container,"SVM")                 
+# SVM_CLASSIFY <- classify_model(container, SVM)
+# analytics <- create_analytics(container, cbind(SVM_CLASSIFY))
+# summary(analytics)
+# 
+# length(analytics@document_summary$MANUAL_CODE)
+# length(analytics@document_summary$SVM_LABEL)
+# 
+# 
+# ## accuracy test
+# confusionMatrix = table(predict = analytics@document_summary$SVM_LABEL, actual = analytics@document_summary$MANUAL_CODE)
+# confusionMatrix
+# 
+# a = confusionMatrix[2,2] 
+# b = confusionMatrix[2,1]
+# c = confusionMatrix[1, 2]
+# d = confusionMatrix[1, 1]
+# precision = a / (a + c)
+# precision
+# 
+# recall = a / (a + b)
+# recall
+# 
+# fMeasure = 2*a / (2*a + b + c)
+# fMeasure
+# 
+# accuracy = (a + d) / (a + b + c +d)
+# accuracy
+# 
+# message(paste("accuracy: ", accuracy, "; precision: ", precision, "; recall: ", recall, "; f-measure: ", fMeasure))
