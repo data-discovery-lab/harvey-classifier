@@ -4,13 +4,13 @@ Created on Wed Oct 11 12:40:27 2017
 
 @author: jstuve
 """
-
+import os
 from sklearn.metrics import confusion_matrix
 
 '''
 Predict File is created through command line demo show in the READ.ME
 '''
-predict_file = 'C:/Users/jstuve/Desktop/GitProj/harvey-classifier/libshorttext-1.1/predict_result'
+predict_file = os.getcwd() + '\\predict_results'
 
 pred = []
 act = []
