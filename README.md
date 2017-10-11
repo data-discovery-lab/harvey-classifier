@@ -48,7 +48,7 @@ LibShortText Library is already forked in this project. To begin, you must be us
 
 **Terminal Command Required:** `$ make`
 
-### Basic SVM Accuracy Prediction
+### Accuracy Prediction
 
 In order to us LibShortText through the terminal be sure to format the data as described below. Once that is done, you are able to us the library from the terminal.
 
@@ -67,9 +67,11 @@ In order to us LibShortText through the terminal be sure to format the data as d
 Train a properly formatted text file to obtain a model. This process will generate a train_file.model folder that will be used to help predict results
 
 ```
-$ python text-train.py train-rescue-500.txt
+$ python text-train.py -f -P 5 train-rescue-500.txt
 [output information]
 ```
+
+*Note:* '-f', will overwrite existing model so you don't have to keep deleting the folder. '-P 5', will remove perform stopword removal with no stemming and bigram
 
 **Predict Results:**
 
@@ -80,8 +82,47 @@ $ python text-predict.py text-rescue-500.txt train-rescue-500.txt.model predict_
 Accuracy = 87.4627% (293/335)
 ```
 
+**Output Predict File Example:**
+
+```
+1	1	0.1247661917114106	-0.1247661917114108
+1	1	0.5503415246190869	-0.5503415246190871
+1	1	0.5636778996243449	-0.5636778996243454
+0	1	-0.1375435769807245	0.1375435769807243
+0	1	-0.3551552489300245	0.3551552489300241
+```
+
 **Full Terminal Example:**
 
-![SVM-Accuracy-Example](https://github.com/litpuvn/harvey-classifier/blob/master/libshorttext-1.1/Rescue-SVM-Demo/SVM_Accuracy_Ex.png)
+![SVM-Accuracy-Example](https://github.com/litpuvn/harvey-classifier/blob/master/libshorttext-1.1/Rescue-SVM-Demo/SVM_Accuracy.png)
+
+### Precision, Recall and F-Measure(F-Score)
+
+1. Create predict file from the steps above
+
+2. Name file: **predict_results**
+
+3. Place, **predict_results** in that same folder as **SVM-Analyzer.py**
+
+4. Run `$ python SVM-Analyzer.py`
+
+**Output Example:**
+```
+Precision: 0.933098591549
+Recall: 0.920138888889
+F-measure: 0.926573426573
+```
+
+### Final SVM Output on Rescue Data
+
+**Accuracy:** 87.4627%
+
+**Precision:** 0.933098591549
+
+**Recall:** 0.920138888889
+
+**F-Measure(F-Score):** 0.926573426573
+
+
 
 
