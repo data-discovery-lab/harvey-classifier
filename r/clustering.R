@@ -30,13 +30,13 @@ dev.off()
 library(kernlab)
 myData = as.matrix(data)
 sc = specc(myData, centers=3)
-plot(myData, col=sc, pch=20)      
+plot(myData, main = "Spectral Clustering with Centers=3",  col=sc + 1, xlab = "", ylab ="", pch=20, cex=2)      
 
 
 ## 4. db scan
 dev.off()
 library(dbscan)
 db = dbscan(myData, eps = 2, minPts = 5)
-plot(myData , col = db$cluster + 1, main ="DBScan with eps=1" , xlab ="" , ylab ="" , pch=20 , cex=2)
+plot(myData , col = db$cluster + 1, main ="DBScan with eps=2" , xlab ="" , ylab ="" , pch=20 , cex=2)
 
 
