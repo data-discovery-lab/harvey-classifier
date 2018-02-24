@@ -13,14 +13,11 @@ import warnings
 import pandas as pd
 
 import logging
-import tempfile
 from nltk.corpus import stopwords
 from string import punctuation
 from gensim import corpora
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
 warnings.filterwarnings("ignore")
-import gensim
 
 
 def create_stop_words():
@@ -50,26 +47,26 @@ def get_parser():
     parser.add_argument("-o",
                         "--outputFolder",
                         dest="out",
-                        help="the name of the output folder",
+                        help="the path of the output folder",
                         default="output")
 
 
     parser.add_argument("-d",
                         "--header",
                         dest="textHeader",
-                        help="the header of each column",
+                        help="the header of text column",
                         default='Tweet')
 
     parser.add_argument("-n",
                         "--fileName",
                         dest="fileName",
-                        help="the name of the file",
+                        help="the name of the output file",
                         default='elon')
 
     return parser
 
-def create_dict_and_corpus(inputFile, outputFolder, text_header='Tweet', filename='data'):
 
+def create_dict_and_corpus(inputFile, outputFolder, text_header='Tweet', filename='data'):
         tweets = pd.read_csv(inputFile, encoding='latin1')
         all_tweets = tweets[text_header]
 
@@ -85,11 +82,6 @@ def create_dict_and_corpus(inputFile, outputFolder, text_header='Tweet', filenam
 
         corpus = [dictionary.doc2bow(text) for text in texts]
         corpora.MmCorpus.serialize(os.path.join('output', filename + '.mm'), corpus)  # store to disk, for later use
-
-myInput = 'input/data_elonmusk.csv'
-outputFolder = 'output'
-
-# create_dict_and_corpus(myInput, outputFolder=outputFolder, text_header='Tweet', filename='elon')
 
 
 if __name__ == '__main__':
