@@ -140,7 +140,7 @@ for i, index in enumerate(indexes):
 
 # Keras convolutional model
 batch_size = 32
-nb_epochs = 100
+nb_epochs = 20
 
 model = Sequential()
 
