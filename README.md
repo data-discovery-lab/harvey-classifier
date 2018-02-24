@@ -50,9 +50,9 @@ LibShortText Library is already forked in this project. To begin, you must be us
 
 ### Accuracy Prediction
 
-In order to us LibShortText through the terminal be sure to format the data as described below. Once that is done, you are able to us the library from the terminal.
+In order to us LibShortText through the terminal be sure to format the data as described below. Once that is done, you are able to us the library from the terminal. **Text files must be classified into 2 or more categories**, as shown below.
 
-**Text File Format (.txt):** <LABEL><TAB><TEXT>
+**Text File Format 1 (.txt):** <LABEL><TAB><TEXT>
 ```
 1    harveyrescue harveyrelief eliza(832) 25742376506 glenmorris crt houston77084
 1    harveyrescue harveyrelief urgent alone elderly woman11611 innsbury(btwn bertrand hopper in aldine) houston 77093 flooded home
@@ -60,6 +60,16 @@ In order to us LibShortText through the terminal be sure to format the data as d
 0    sosharveyrescue strandedhouston uscg billbishopkhou houstonpolice nationalguard texasguard cohoustonfire amodm9onf3
 0    love this look for the helpers you will always find people who are helping harvey2017 prayfortexas khtgfvkfer
 0    text harvey to 90999 help our friends in texas esqvx9sbg4
+```
+  
+**Text File Format 2 (.txt):** <LABEL><TAB><TEXT>
+```
+3    harveyrescue harveyrelief eliza(832) 25742376506 glenmorris crt houston77084
+3    harveyrescue harveyrelief urgent alone elderly woman11611 innsbury(btwn bertrand hopper in aldine) houston 77093 flooded home
+2    harveyrescue harveyrelief one adult disable (sickle cell anemia) sharon beverly 10126 valley club dr houston tx 77078
+2    sosharveyrescue strandedhouston uscg billbishopkhou houstonpolice nationalguard texasguard cohoustonfire amodm9onf3
+1    love this look for the helpers you will always find people who are helping harvey2017 prayfortexas khtgfvkfer
+1    text harvey to 90999 help our friends in texas esqvx9sbg4
 ```
   
 **Train Text File:**
