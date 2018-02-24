@@ -3,14 +3,15 @@ import numpy as np
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import plotly as py
 import plotly.graph_objs as go
+import argparse
 
-init_notebook_mode(connected=True) #do not miss this line
+# init_notebook_mode(connected=True) #do not miss this line
 
 from gensim import corpora, models, similarities
 
 import warnings
 import pandas as pd
-import gensim
+
 import logging
 import tempfile
 from nltk.corpus import stopwords
@@ -19,39 +20,80 @@ from gensim import corpora
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 warnings.filterwarnings("ignore")
+import gensim
 
 
-def create_dict_and_corpus(inputFile, outputFolder, filename='data'):
-
-        tweets = pd.read_csv(inputFile, encoding='latin1')
-        tweets = tweets.assign(Time=pd.to_datetime(tweets.Time)).drop('row ID', axis='columns')
-
-        tweets.head(10)
-
-        range(len(tweets['Tweet']))
-        tweets['Time'] = pd.to_datetime(tweets['Time'], format='%y-%m-%d %H:%M:%S')
-        tweetsT = tweets['Time']
-
-        corpus=[]
-        a=[]
-        for i in range(len(tweets['Tweet'])):
-                a=tweets['Tweet'][i]
-                corpus.append(a)
-
-        print('Folder "{}" will be used to save temporary dictionary and corpus.'.format(outputFolder))
-
-
-
+def create_stop_words():
         # remove common words and tokenize
-        list1 = ['RT','rt']
+        list1 = ['RT', 'rt']
         stoplist = stopwords.words('english') + list(punctuation) + list1
 
-        texts = [[word for word in str(document).lower().split() if word not in stoplist] for document in corpus]
+        return stoplist
+
+
+def clean_text_data(text_array):
+    stop_list = create_stop_words()
+    texts = [[word for word in str(document).lower().split() if word not in stop_list] for document in text_array]
+
+    return texts
+
+
+def get_parser():
+    """Get parser for command line arguments."""
+    parser = argparse.ArgumentParser(description="Tweet Cleaner")
+    parser.add_argument("-i",
+                        "--input",
+                        dest="inputs",
+                        help="the name of the input file",
+                        default='')
+
+    parser.add_argument("-o",
+                        "--outputFolder",
+                        dest="out",
+                        help="the name of the output folder",
+                        default="output")
+
+
+    parser.add_argument("-d",
+                        "--header",
+                        dest="textHeader",
+                        help="the header of each column",
+                        default='Tweet')
+
+    parser.add_argument("-n",
+                        "--fileName",
+                        dest="fileName",
+                        help="the name of the file",
+                        default='elon')
+
+    return parser
+
+def create_dict_and_corpus(inputFile, outputFolder, text_header='Tweet', filename='data'):
+
+        tweets = pd.read_csv(inputFile, encoding='latin1')
+        all_tweets = tweets[text_header]
+
+        corpus = []
+        for tweet in all_tweets:
+            corpus.append(tweet)
+
+        print('Folder "{}" will be used to save temporary dictionary and corpus.'.format(outputFolder))
+        texts = clean_text_data(corpus)
 
         dictionary = corpora.Dictionary(texts)
         dictionary.save(os.path.join(outputFolder, filename + '.dict'))  # store the dictionary, for future reference
 
+        corpus = [dictionary.doc2bow(text) for text in texts]
+        corpora.MmCorpus.serialize(os.path.join('output', filename + '.mm'), corpus)  # store to disk, for later use
+
 myInput = 'input/data_elonmusk.csv'
 outputFolder = 'output'
 
-create_dict_and_corpus(myInput, outputFolder=outputFolder, filename='elon')
+# create_dict_and_corpus(myInput, outputFolder=outputFolder, text_header='Tweet', filename='elon')
+
+
+if __name__ == '__main__':
+    parser = get_parser()
+    args = parser.parse_args()
+    create_dict_and_corpus(args.inputs, args.out, args.textHeader, args.fileName)
+    print("ddd")
