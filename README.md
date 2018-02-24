@@ -50,7 +50,7 @@ LibShortText Library is already forked in this project. To begin, you must be us
 
 ### Accuracy Prediction
 
-In order to us LibShortText through the terminal be sure to format the data as described below. Once that is done, you are able to us the library from the terminal. Text files must be classified into 2 or more categories, as shown below.
+In order to us LibShortText through the terminal be sure to format the data as described below. Once that is done, you are able to us the library from the terminal. **Text files must be classified into 2 or more categories**, as shown below.
 
 **Text File Format 1 (.txt):** <LABEL><TAB><TEXT>
 ```
