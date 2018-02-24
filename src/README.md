@@ -1,9 +1,11 @@
-Command Line ARguments
+Command Line Arguments
 
 -i : the name of the input file
 -o : the name of the output folder
 -d : the name of the header
 -n : the name of the file
 
-Usage 
+## Usage 
+'''
 python create_dict_corpus.py -i input/data_elonmusk.csv -o output -d Tweet -n elon
+'''
