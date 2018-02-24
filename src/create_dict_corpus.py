@@ -88,4 +88,4 @@ if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
     create_dict_and_corpus(args.inputs, args.out, args.textHeader, args.fileName)
-    print("ddd")
+    print("done")
