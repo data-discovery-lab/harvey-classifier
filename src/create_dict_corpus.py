@@ -22,7 +22,7 @@ warnings.filterwarnings("ignore")
 
 def create_stop_words():
         # remove common words and tokenize
-        list1 = ['RT', 'rt']
+        list1 = ['RT', 'rt', 'get', 'got', 'would', 'think', 'thought', '"']
         stoplist = stopwords.words('english') + list(punctuation) + list1
 
         return stoplist

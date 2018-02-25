@@ -12,25 +12,26 @@ import matplotlib.pyplot as plt
 import pyLDAvis.gensim
 
 
-def create_lda_model(corpus_file, dict_file, total_topics=5):
+def create_lda_model(corpus_file, dict_file, num_topics=5):
     dictionary = corpora.Dictionary.load(dict_file)
     corpus = corpora.MmCorpus(corpus_file)
 
     tfidf = models.TfidfModel(corpus) # step 1 -- initialize a model
     corpus_tfidf = tfidf[corpus]  # step 2 -- use the model to transform vectors
 
-    lda = models.LdaModel(corpus, id2word=dictionary, num_topics=total_topics)
+    lda = models.LdaModel(corpus, id2word=dictionary, num_topics=num_topics)
     corpus_lda = lda[corpus_tfidf] # create a double wrapper over the original corpus: bow->tfidf->fold-in-lsi
 
-    return lda, corpus_lda, dictionary, total_topics
+    return lda, corpus_lda, dictionary, num_topics
 
 
-fileName = 'elon'
+fileName = 'opioid'
 mm_corpus_file = 'output/' + fileName + '.mm'
 mm_dict_file = 'output/' + fileName + '.dict'
 NUM_WORDS = 5
+TOTAL_TOPICS = 3
 
-lda, corpus_lda, dictionary, total_topics = create_lda_model(corpus_file=mm_corpus_file, dict_file=mm_dict_file)
+lda, corpus_lda, dictionary, total_topics = create_lda_model(corpus_file=mm_corpus_file, dict_file=mm_dict_file, num_topics=TOTAL_TOPICS)
 
 # Show first n important word in the topics:
 topic_words = lda.show_topics(total_topics, num_words=NUM_WORDS)
@@ -53,4 +54,4 @@ plt.show()
 # prepare LDA_topics model visualization
 LDA_vis_data = pyLDAvis.gensim.prepare(lda, corpus_lda, dictionary)
 # save visualization
-pyLDAvis.save_html(LDA_vis_data, 'output/vis/topic.html')
+pyLDAvis.save_html(LDA_vis_data, 'output/vis/' + fileName + '-topic.html')
