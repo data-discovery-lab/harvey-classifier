@@ -29,7 +29,7 @@ fileName = 'opioid'
 mm_corpus_file = 'output/' + fileName + '.mm'
 mm_dict_file = 'output/' + fileName + '.dict'
 NUM_WORDS = 5
-TOTAL_TOPICS = 3
+TOTAL_TOPICS = 2
 
 lda, corpus_lda, dictionary, total_topics = create_lda_model(corpus_file=mm_corpus_file, dict_file=mm_dict_file, num_topics=TOTAL_TOPICS)
 
