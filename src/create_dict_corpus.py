@@ -13,31 +13,11 @@ import warnings
 import pandas as pd
 
 import logging
-from nltk.corpus import stopwords
-from string import punctuation
+from core.stop_word_builder import StopWordBuilder
+
 from gensim import corpora
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 warnings.filterwarnings("ignore")
-
-
-def create_stop_words(custom_stop_words):
-        # remove common words and tokenize
-        # list1 = ['RT', 'rt', 'get', 'got', 'would', 'think', 'thought', '"']
-        my_stopwords = []
-        with open(custom_stop_words) as f:
-            for word in f:
-                my_stopwords.append(word.rstrip('\n'))
-
-        stoplist = stopwords.words('english') + list(punctuation) + my_stopwords
-
-        return stoplist
-
-
-def clean_text_data(text_array, stop_words):
-    stop_list = create_stop_words(stop_words)
-    texts = [[word for word in str(document).lower().split() if word not in stop_list] for document in text_array]
-
-    return texts
 
 
 def get_parser():
@@ -87,6 +67,15 @@ def get_parser():
                         default='input/stopwords.txt')
 
     return parser
+
+
+def clean_text_data(text_array, stop_words):
+    stop_builder = StopWordBuilder(stop_words)
+
+    stop_list = stop_builder.get_stop_words()
+    texts = [[word for word in str(document).lower().split() if word not in stop_list] for document in text_array]
+
+    return texts
 
 
 def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_header='Tweet', filename='data', stop_words='input/stopwords.txt'):

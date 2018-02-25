@@ -25,7 +25,7 @@ def create_lda_model(corpus_file, dict_file, num_topics=5):
     return lda, corpus_lda, dictionary, num_topics
 
 
-fileName = 'opioid'
+fileName = 'opioid-pos'
 mm_corpus_file = 'output/' + fileName + '.mm'
 mm_dict_file = 'output/' + fileName + '.dict'
 NUM_WORDS = 5
