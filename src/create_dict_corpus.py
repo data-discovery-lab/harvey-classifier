@@ -20,16 +20,21 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 warnings.filterwarnings("ignore")
 
 
-def create_stop_words():
+def create_stop_words(custom_stop_words):
         # remove common words and tokenize
-        list1 = ['RT', 'rt', 'get', 'got', 'would', 'think', 'thought', '"']
-        stoplist = stopwords.words('english') + list(punctuation) + list1
+        # list1 = ['RT', 'rt', 'get', 'got', 'would', 'think', 'thought', '"']
+        my_stopwords = []
+        with open(custom_stop_words) as f:
+            for word in f:
+                my_stopwords.append(word.rstrip('\n'))
+
+        stoplist = stopwords.words('english') + list(punctuation) + my_stopwords
 
         return stoplist
 
 
-def clean_text_data(text_array):
-    stop_list = create_stop_words()
+def clean_text_data(text_array, stop_words):
+    stop_list = create_stop_words(stop_words)
     texts = [[word for word in str(document).lower().split() if word not in stop_list] for document in text_array]
 
     return texts
@@ -75,10 +80,16 @@ def get_parser():
                         help="the name of the output file",
                         default='elon')
 
+    parser.add_argument("-w",
+                        "--stopwords",
+                        dest="stopwordsFile",
+                        help="Path to stopwords file",
+                        default='input/stopwords.txt')
+
     return parser
 
 
-def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_header='Tweet', filename='data'):
+def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_header='Tweet', filename='data', stop_words='input/stopwords.txt'):
         tweets = pd.read_csv(inputFile, sep=separator, encoding=encoding)
         all_tweets = tweets[text_header]
 
@@ -89,7 +100,7 @@ def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_he
         logging.info('total tweets: ' + str(len(corpus)))
 
         print('Folder "{}" will be used to save dictionary and corpus.'.format(outputFolder))
-        texts = clean_text_data(corpus)
+        texts = clean_text_data(corpus, stop_words)
 
         dictionary = corpora.Dictionary(texts)
         dictionary.save(os.path.join(outputFolder, filename + '.dict'))  # store the dictionary, for future reference
@@ -101,5 +112,5 @@ def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_he
 if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
-    create_dict_and_corpus(args.inputs, args.separator, args.encoding, args.out, args.textHeader, args.fileName)
+    create_dict_and_corpus(args.inputs, args.separator, args.encoding, args.out, args.textHeader, args.fileName, args.stopwordsFile)
     print("done")
