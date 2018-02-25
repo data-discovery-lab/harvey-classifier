@@ -31,7 +31,7 @@ class TweetReader:
     def get_total_tweets(self):
         return len(self.get_corpus())
 
-    def extract_words_frequency(self, num_words=None, stop_word_file=''):
+    def extract_words_frequency(self, num_words=None, stop_word_file='', ordered='desc'):
         my_clean_tweets = []
 
         if len(stop_word_file) > 0:
@@ -53,6 +53,9 @@ class TweetReader:
         byFreq = sorted(results, key=lambda word: word[1], reverse=True)
 
         if num_words is not None:
-            return byFreq[: num_words]
+            byFreq = byFreq[: num_words]
+
+        if ordered == 'asc':
+            byFreq = sorted(byFreq, key=lambda word: word[1], reverse=False)
 
         return byFreq
