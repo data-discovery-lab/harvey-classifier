@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from core.tweet_reader import TweetReader
 
 reader = TweetReader('data/pos_neg/neg_comment.csv',  text_column='text', separator='\001', encoding='utf8')
-freq = reader.extract_words_frequency(num_words=10, stop_word_file='input/stopwords.txt')
+freq = reader.extract_words_frequency(num_words=10, stop_word_file='input/stopwords.txt', ordered='asc')
 
 words_names = []
 words_count = []
