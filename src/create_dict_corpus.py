@@ -37,12 +37,24 @@ def clean_text_data(text_array):
 
 def get_parser():
     """Get parser for command line arguments."""
-    parser = argparse.ArgumentParser(description="Tweet Cleaner")
+    parser = argparse.ArgumentParser(description="Tweet Cleaning and Creating Corpus and Dictionary files")
     parser.add_argument("-i",
                         "--input",
                         dest="inputs",
-                        help="the name of the input file",
-                        default='')
+                        help="the path of the csv input file",
+                        default='input/data_elonmusk.csv')
+
+    parser.add_argument("-s",
+                        "--separator",
+                        dest="separator",
+                        help="Separator of the csv input file",
+                        default=",")
+
+    parser.add_argument("-e",
+                        "--encoding",
+                        dest="encoding",
+                        help="Encoding of the csv input file",
+                        default="latin1")
 
     parser.add_argument("-o",
                         "--outputFolder",
@@ -51,8 +63,8 @@ def get_parser():
                         default="output")
 
 
-    parser.add_argument("-d",
-                        "--header",
+    parser.add_argument("-t",
+                        "--textHeader",
                         dest="textHeader",
                         help="the header of text column",
                         default='Tweet')
@@ -66,15 +78,17 @@ def get_parser():
     return parser
 
 
-def create_dict_and_corpus(inputFile, outputFolder, text_header='Tweet', filename='data'):
-        tweets = pd.read_csv(inputFile, encoding='latin1')
+def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_header='Tweet', filename='data'):
+        tweets = pd.read_csv(inputFile, sep=separator, encoding=encoding)
         all_tweets = tweets[text_header]
 
         corpus = []
         for tweet in all_tweets:
             corpus.append(tweet)
 
-        print('Folder "{}" will be used to save temporary dictionary and corpus.'.format(outputFolder))
+        logging.info('total tweets: ' + str(len(corpus)))
+
+        print('Folder "{}" will be used to save dictionary and corpus.'.format(outputFolder))
         texts = clean_text_data(corpus)
 
         dictionary = corpora.Dictionary(texts)
@@ -87,5 +101,5 @@ def create_dict_and_corpus(inputFile, outputFolder, text_header='Tweet', filenam
 if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
-    create_dict_and_corpus(args.inputs, args.out, args.textHeader, args.fileName)
+    create_dict_and_corpus(args.inputs, args.separator, args.encoding, args.out, args.textHeader, args.fileName)
     print("done")
