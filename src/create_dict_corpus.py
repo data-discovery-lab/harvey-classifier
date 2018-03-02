@@ -14,6 +14,7 @@ import pandas as pd
 
 import logging
 from core.stop_word_builder import StopWordBuilder
+from core.tweet_cleaner import TweetCleaner
 
 from gensim import corpora
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -69,15 +70,6 @@ def get_parser():
     return parser
 
 
-def clean_text_data(text_array, stop_words):
-    stop_builder = StopWordBuilder(stop_words)
-
-    stop_list = stop_builder.get_stop_words()
-    texts = [[word for word in str(document).lower().split() if word not in stop_list] for document in text_array]
-
-    return texts
-
-
 def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_header='Tweet', filename='data', stop_words='input/stopwords.txt'):
         tweets = pd.read_csv(inputFile, sep=separator, encoding=encoding)
         all_tweets = tweets[text_header]
@@ -89,7 +81,7 @@ def create_dict_and_corpus(inputFile, separator, encoding, outputFolder, text_he
         logging.info('total tweets: ' + str(len(corpus)))
 
         print('Folder "{}" will be used to save dictionary and corpus.'.format(outputFolder))
-        texts = clean_text_data(corpus, stop_words)
+        texts = TweetCleaner.clean_text_data(corpus, stop_words)
 
         dictionary = corpora.Dictionary(texts)
         dictionary.save(os.path.join(outputFolder, filename + '.dict'))  # store the dictionary, for future reference
