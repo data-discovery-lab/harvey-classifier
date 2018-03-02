@@ -1,6 +1,5 @@
 import pandas as pd
-import re
-from core.stop_word_builder import StopWordBuilder
+from core.tweet_cleaner import TweetCleaner
 
 
 class TweetReader:
@@ -11,16 +10,6 @@ class TweetReader:
         self.corpus = []
         for tweet in all_tweets:
             self.corpus.append(tweet)
-
-    @staticmethod
-    def _clean_text_data(text_array, stop_words):
-        stop_builder = StopWordBuilder(stop_words)
-
-        stop_list = stop_builder.get_stop_words()
-
-        texts = [[word for word in re.findall('[a-z]{3,15}', str(document).lower()) if word not in stop_list] for document in text_array]
-
-        return texts
 
     def get_corpus(self):
         return self.corpus
@@ -35,7 +24,7 @@ class TweetReader:
         my_clean_tweets = []
 
         if len(stop_word_file) > 0:
-            my_clean_tweets = TweetReader._clean_text_data(self.corpus, stop_word_file)
+            my_clean_tweets = TweetCleaner.clean_text_data(self.corpus, stop_word_file)
 
         freq = {}
 
