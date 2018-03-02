@@ -11,11 +11,12 @@ class TextToNumber:
         body_pp = processor(keep_n=max_uniqie_words_size, padding_maxlen=padding_maxlen, padding=padding_position)
         vecs = body_pp.fit_transform(raw_text_array)
 
-        # Save the preprocessor
-        with open(output_file + '.dpkl', 'wb') as f:
-            dpickle.dump(body_pp, f)
+        if output_file is not None:
+            # Save the preprocessor
+            with open(output_file + '.dpkl', 'wb') as f:
+                dpickle.dump(body_pp, f)
 
-        # Save the processed data
-        np.save(output_file + '.npy', vecs)
+            # Save the processed data
+            np.save(output_file + '.npy', vecs)
 
         return vecs
