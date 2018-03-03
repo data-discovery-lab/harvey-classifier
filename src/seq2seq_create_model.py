@@ -73,12 +73,12 @@ seq2seq_Model.compile(optimizer=optimizers.Nadam(lr=0.001), loss='sparse_categor
 
 seq2seq_Model.summary()
 
-plot_model(seq2seq_Model, to_file='model.png')
+plot_model(seq2seq_Model, to_file='output/seq2seq/model.png')
 
 
 script_name_base = 'tutorial_seq2seq'
-csv_logger = CSVLogger('{:}.log'.format(script_name_base))
-model_checkpoint = ModelCheckpoint('{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
+csv_logger = CSVLogger('output/seq2seq/{:}.log'.format(script_name_base))
+model_checkpoint = ModelCheckpoint('output/seq2seq/{:}.epoch{{epoch:02d}}-val{{val_loss:.5f}}.hdf5'.format(script_name_base),
                                    save_best_only=True)
 
 batch_size = 1200
@@ -89,6 +89,6 @@ history = seq2seq_Model.fit([encoder_input_data, decoder_input_data], np.expand_
           validation_split=0.12, callbacks=[csv_logger, model_checkpoint])
 
 #save model
-seq2seq_Model.save('seq2seq_model_tutorial.h5')
+seq2seq_Model.save('output/seq2seq/seq2seq_model_tutorial.h5')
 
 print('done')
