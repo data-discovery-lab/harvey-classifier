@@ -18,7 +18,7 @@ def load_data(filename, max_attr=100):
     with open(filename, 'r') as f:
         data = list(csv.reader(f, delimiter=','))
     result = []
-    for i in xrange(len(data)):
+    for i in range(len(data)):
         attrbs = []
         for val in data[i][1:]:
             val = val.strip()
