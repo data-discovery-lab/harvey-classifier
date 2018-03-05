@@ -1,11 +1,9 @@
 import itertools
 import csv
 # import parameters
+from optparse import OptionParser
+import sys
 
-
-parameters = {}
-parameters.SUPPORT = 3
-parameters.CONFIDENCE = 5
 
 def load_data(filename, max_attr=100):
     """
@@ -157,10 +155,31 @@ def apriori(prev_l, k):
     return result
 
 
+if __name__ == "__main__":
 
-data = load_data('1000-out1.csv')
-solve(data, parameters.SUPPORT, parameters.CONFIDENCE)
-# for s in xrange(2, 11, 2):
-#     for c in xrange(s, 11, 2):
-#         count = solve(data, s, c)
-#         print '{0:10} {1:10}  {2:20}'.format(str(s), str(c), str(count))
+    optparser = OptionParser()
+    optparser.add_option('-f', '--inputFile',
+                         dest='input',
+                         help='filename containing csv',
+                         default='../input/arule-text.vec.csv')
+    optparser.add_option('-s', '--minSupport',
+                         dest='minS',
+                         help='minimum support value',
+                         default=0.15,
+                         type='float')
+    optparser.add_option('-c', '--minConfidence',
+                         dest='minC',
+                         help='minimum confidence value',
+                         default=0.6,
+                         type='float')
+
+    (options, args) = optparser.parse_args()
+
+    inFile = options.input
+    minSupport = options.minS
+    minConfidence = options.minC
+
+    data = load_data(inFile, max_attr=319)
+
+    solve(data, minSupport, minConfidence)
+
