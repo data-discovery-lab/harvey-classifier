@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     inputFile = args.inputs
 
-    outputFile = inputFile[0:(len(inputFile)-5)] + '.vec.csv'
+    outputFile = inputFile[0:(len(inputFile)-4)] + '.vec.csv'
 
     textToNumber = TextToNumber()
 
