@@ -1,21 +1,23 @@
 import pandas as pd
 from core.tweet_cleaner import TweetCleaner
-
+import csv
 
 class TweetReader:
     def __init__(self, tweet_file, text_column='tweet', separator=',', encoding='latin1'):
-        self.tweets_df = pd.read_csv(tweet_file, sep=separator, encoding=encoding)
-        all_tweets = self.tweets_df[text_column]
+        # self.tweets_df = pd.read_csv(tweet_file, encoding=encoding)
+        # all_tweets = self.tweets_df[text_column]
 
-        self.corpus = []
-        for tweet in all_tweets:
-            self.corpus.append(tweet)
+        with open(tweet_file, 'r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            self.corpus = []
+            for tweet in reader:
+                self.corpus.append(tweet[text_column])
 
     def get_corpus(self):
         return self.corpus
 
-    def get_tweets_df(self):
-        return self.tweets_df
+    # def get_tweets_df(self):
+    #     return self.tweets_df
 
     def get_total_tweets(self):
         return len(self.get_corpus())
