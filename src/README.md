@@ -13,3 +13,5 @@
 ```
 python create_dict_corpus.py -i input/data_elonmusk.csv -o output -d Tweet -n elon
 ```
+
+## and then run LDA model
