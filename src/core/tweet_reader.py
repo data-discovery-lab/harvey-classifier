@@ -3,19 +3,17 @@ from core.tweet_cleaner import TweetCleaner
 import csv
 
 class TweetReader:
+
     def __init__(self, tweet_file, text_column='tweet', separator=',', encoding='latin1', header=None):
-        self.tweets_df = pd.read_csv(tweet_file, encoding=encoding, sep=separator, header=header, usecols=[text_column])
-        all_tweets = self.tweets_df[text_column]
         self.corpus = []
+        self.add_file_content_to_corpus(tweet_file, text_column, separator, encoding, header)
+
+    def add_file_content_to_corpus(self,  tweet_file, text_column='tweet', separator=',', encoding='latin1', header=None):
+        tweets_df = pd.read_csv(tweet_file, encoding=encoding, sep=separator, header=header, usecols=[text_column])
+        all_tweets = tweets_df[text_column]
         for tweet in all_tweets:
             self.corpus.append(tweet)
 
-
-        # with open(tweet_file, 'r') as csvfile:
-        #     reader = csv.DictReader(csvfile)
-        #     self.corpus = []
-        #     for tweet in reader:
-        #         self.corpus.append(tweet[text_column])
 
     def get_corpus(self):
         return self.corpus
@@ -26,7 +24,7 @@ class TweetReader:
     def get_total_tweets(self):
         return len(self.get_corpus())
 
-    def extract_words_frequency(self, num_words=None, stop_word_file='', ordered='desc'):
+    def extract_words_frequency(self, num_words=None, min_threshold=None, stop_word_file='', ordered='desc'):
         my_clean_tweets = []
 
         if len(stop_word_file) > 0:
@@ -42,6 +40,9 @@ class TweetReader:
         frequency_list = freq.keys()
         results = []
         for word in frequency_list:
+            if min_threshold is not None:
+                if freq[word] < min_threshold:
+                    continue
             tuple = (word, freq[word])
             results.append(tuple)
 
