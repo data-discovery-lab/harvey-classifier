@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 reader = TweetReader('data/texasfarmbureau/2017-06.csv',  text_column="text", separator=',', header=0)
-wfreq = reader.extract_words_frequency(num_words=None, min_threshold=None, stop_word_file=None, ordered='asc')
+wfreq = reader.extract_words_frequency(num_words=None, min_threshold=None, stop_word_file='input/farmers_stop_words.txt', ordered='asc')
 
 words_names = []
 words_count = []
@@ -20,6 +20,7 @@ for (word, freq) in wfreq:
     frequencies.append(freq)
 
 median_freq = statistics.median(frequencies)
+median_freq = 4
 ## remove low frequency items
 final_wfreq = dict()
 for word, freq in need_wfreq.items():
