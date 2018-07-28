@@ -25,15 +25,18 @@ class TweetReader:
         return len(self.get_corpus())
 
     def extract_words_frequency(self, num_words=None, min_threshold=None, stop_word_file='', ordered='desc'):
-        my_clean_tweets = []
 
-        if len(stop_word_file) > 0:
-            my_clean_tweets = TweetCleaner.clean_text_data(self.corpus, stop_word_file)
+        my_clean_tweets = TweetCleaner.clean_text_data(self.corpus, stop_word_file)
 
         freq = {}
 
         for tweet in my_clean_tweets:
-            for word in tweet:
+            words = tweet
+            if isinstance(tweet, str):
+                tweet = tweet.lower()
+                words = tweet.split(' ')
+
+            for word in words:
                 count = freq.get(word, 0)
                 freq[word] = count + 1
 

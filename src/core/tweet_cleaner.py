@@ -8,7 +8,7 @@ class TweetCleaner:
 
 
     @staticmethod
-    def clean_text_data(text_array, stop_words_file):
+    def clean_text_data(text_array, stop_words_file=None):
         stop_builder = StopWordBuilder(stop_words_file)
 
         stop_list = stop_builder.get_stop_words()
