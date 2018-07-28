@@ -32,7 +32,7 @@ for word, freq in sorted_wfreq:
     words_names.append(word)
     words_count.append(freq)
 
-print(final_wfreq)
+print(sorted_wfreq)
 
 show_plot = True
 
